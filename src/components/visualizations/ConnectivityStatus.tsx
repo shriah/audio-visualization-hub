@@ -23,9 +23,6 @@ const ConnectivityStatus: React.FC<ConnectivityStatusProps> = ({
       return <WifiOff className="h-4 w-4 text-red-500" />;
     }
   };
-
-  // Determine which format we're dealing with
-  const isNewFormat = 'signalConnection' in connectivityResults;
   
   return (
     <Card className="neo-card overflow-hidden">
@@ -38,7 +35,7 @@ const ConnectivityStatus: React.FC<ConnectivityStatusProps> = ({
         </div>
       </CardHeader>
       <CardContent>
-        {!isNewFormat && preflightReport && (
+        {preflightReport && (
           <div className="grid grid-cols-2 gap-4 mb-6">
             <div className="rounded-lg bg-secondary/50 p-3">
               <div className="text-muted-foreground mb-1 text-sm">DTLS Connection</div>

@@ -70,21 +70,29 @@ export interface BrowserInformation {
   cpu: any;
 }
 
+// Common types for all connectivity status fields
+export type ConnectivityStatus = 'operational' | 'degraded' | 'outage' | 'Reachable' | 'success' | 'failed';
+
 export interface ConnectivityResults {
-  groupRooms?: string;
-  peerToPeerRooms?: string;
-  recordings?: string;
-  compositions?: string;
-  networkTraversalService?: string;
-  goRooms?: string;
-  signalingRegion?: string;
-  turn?: string;
+  // Legacy format properties
+  groupRooms?: ConnectivityStatus;
+  peerToPeerRooms?: ConnectivityStatus;
+  recordings?: ConnectivityStatus;
+  compositions?: ConnectivityStatus;
+  networkTraversalService?: ConnectivityStatus;
+  goRooms?: ConnectivityStatus;
+  signalingRegion?: ConnectivityStatus;
+  turn?: ConnectivityStatus;
+  
   // New format properties
-  signalConnection?: string;
-  webrtcConnection?: string;
-  publishAudio?: string;
-  publishVideo?: string;
-  reconnection?: string;
+  signalConnection?: ConnectivityStatus;
+  webrtcConnection?: ConnectivityStatus;
+  publishAudio?: ConnectivityStatus;
+  publishVideo?: ConnectivityStatus;
+  reconnection?: ConnectivityStatus;
+  
+  // Allow for any other properties that might be present 
+  [key: string]: ConnectivityStatus | undefined;
 }
 
 export interface PreflightTestReport {
@@ -150,7 +158,7 @@ export interface VideoTestResults {
   testTiming: TestTiming;
 }
 
-// New interface for quality results
+// Interface for quality results
 export interface QualityResults {
   audio: {
     jitter: number;
@@ -179,11 +187,14 @@ export interface QualityResults {
 }
 
 export interface TestResults {
+  // Required fields for all formats
   audioTestResults: AudioTestResults;
-  bitrateTestResults?: BitrateTestResults; // Optional for new format
   browserInformation: BrowserInformation;
-  connectivityResults: ConnectivityResults;
-  preflightTestReport?: PreflightTestReport; // Optional for new format
   videoTestResults: VideoTestResults;
-  qualityResults?: QualityResults; // New field for the new format
+  connectivityResults: ConnectivityResults;
+  
+  // Optional fields that may be present in different formats
+  bitrateTestResults?: BitrateTestResults;
+  preflightTestReport?: PreflightTestReport;
+  qualityResults?: QualityResults;
 }
