@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { TestResults } from '@/types/TestResults';
 import AudioVisualizer from './visualizations/AudioVisualizer';
@@ -8,7 +7,8 @@ import DeviceInfo from './visualizations/DeviceInfo';
 import ICECandidates from './visualizations/ICECandidates';
 import QualityMetrics from './visualizations/QualityMetrics';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AudioLines, BarChart3, Wifi, Laptop, Radio } from 'lucide-react';
+import { AudioLines, BarChart3, Wifi, Laptop, Radio, Video } from 'lucide-react';
+import VideoResults from './visualizations/VideoResults';
 
 interface ResultsDisplayProps {
   data: TestResults;
@@ -148,7 +148,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ data }) => {
       </div>
       
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid grid-cols-2 md:grid-cols-5 mb-8">
+        <TabsList className="grid grid-cols-2 md:grid-cols-6 mb-8">
           <TabsTrigger value="overview" className="flex items-center gap-2">
             <BarChart3 className="h-4 w-4" />
             <span>Overview</span>
@@ -156,6 +156,10 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ data }) => {
           <TabsTrigger value="audio" className="flex items-center gap-2">
             <AudioLines className="h-4 w-4" />
             <span>Audio</span>
+          </TabsTrigger>
+          <TabsTrigger value="video" className="flex items-center gap-2">
+            <Video className="h-4 w-4" />
+            <span>Video</span>
           </TabsTrigger>
           <TabsTrigger value="network" className="flex items-center gap-2">
             <Wifi className="h-4 w-4" />
@@ -349,6 +353,10 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ data }) => {
         
         <TabsContent value="ice" className="mt-0 animate-slide-up">
           {renderICECandidates()}
+        </TabsContent>
+        
+        <TabsContent value="video" className="mt-0 animate-slide-up">
+          <VideoResults videoTest={data.videoTestResults} qualityResults={data.qualityResults} />
         </TabsContent>
       </Tabs>
     </div>
