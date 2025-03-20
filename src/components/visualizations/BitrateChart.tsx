@@ -86,7 +86,12 @@ const BitrateChart: React.FC<BitrateChartProps> = ({ data }) => {
                 tick={{ fontSize: 12 }}
               />
               <Tooltip 
-                formatter={(value) => [`${value.toFixed(2)} Kbps`, 'Bitrate']}
+                formatter={(value: any) => {
+                  // Ensure value is a number before calling toFixed
+                  return typeof value === 'number' 
+                    ? [`${value.toFixed(2)} Kbps`, 'Bitrate'] 
+                    : [`${value}`, 'Bitrate'];
+                }}
                 labelFormatter={(label) => `Sample ${label}`}
                 contentStyle={{ 
                   borderRadius: '8px', 

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import FileImport from '@/components/FileImport';
 import ResultsDisplay from '@/components/ResultsDisplay';
 import { TestResults } from '@/types/TestResults';
-import { ChevronLeft, ChevronRight, AlertCircle, Download } from 'lucide-react';
+import { ChevronLeft, ChevronRight, AlertCircle, Download, AudioLines } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
