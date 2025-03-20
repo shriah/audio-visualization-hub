@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { Upload, FileJson, ArrowRight } from 'lucide-react';
@@ -34,15 +33,9 @@ const FileImport: React.FC<FileImportProps> = ({ onImport }) => {
     reader.onload = (event) => {
       try {
         const data = JSON.parse(event.target?.result as string);
-        // Basic validation to check if it's a test result file
-        if (
-          data.audioTestResults && 
-          data.bitrateTestResults && 
-          data.browserInformation && 
-          data.connectivityResults && 
-          data.preflightTestReport && 
-          data.videoTestResults
-        ) {
+        
+        // Check if it matches either the old or new format
+        if (isValidTestResults(data)) {
           onImport(data);
           toast.success('File imported successfully');
         } else {
@@ -64,6 +57,30 @@ const FileImport: React.FC<FileImportProps> = ({ onImport }) => {
     };
 
     reader.readAsText(file);
+  };
+
+  // Function to validate if the data is in the expected format
+  const isValidTestResults = (data: any): data is TestResults => {
+    // Check for required fields in both formats
+    const hasCommonRequiredFields = 
+      data.audioTestResults?.inputTest && 
+      data.browserInformation && 
+      data.videoTestResults;
+      
+    // Check for old format specific fields
+    const isOldFormat = 
+      hasCommonRequiredFields &&
+      data.bitrateTestResults && 
+      data.preflightTestReport &&
+      ('groupRooms' in data.connectivityResults || 'signalingRegion' in data.connectivityResults);
+      
+    // Check for new format specific fields
+    const isNewFormat = 
+      hasCommonRequiredFields &&
+      data.qualityResults &&
+      ('signalConnection' in data.connectivityResults || 'webrtcConnection' in data.connectivityResults);
+      
+    return isOldFormat || isNewFormat;
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {

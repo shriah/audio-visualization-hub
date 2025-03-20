@@ -71,14 +71,20 @@ export interface BrowserInformation {
 }
 
 export interface ConnectivityResults {
-  groupRooms: string;
-  peerToPeerRooms: string;
-  recordings: string;
-  compositions: string;
-  networkTraversalService: string;
-  goRooms: string;
-  signalingRegion: string;
-  turn: string;
+  groupRooms?: string;
+  peerToPeerRooms?: string;
+  recordings?: string;
+  compositions?: string;
+  networkTraversalService?: string;
+  goRooms?: string;
+  signalingRegion?: string;
+  turn?: string;
+  // New format properties
+  signalConnection?: string;
+  webrtcConnection?: string;
+  publishAudio?: string;
+  publishVideo?: string;
+  reconnection?: string;
 }
 
 export interface PreflightTestReport {
@@ -144,11 +150,40 @@ export interface VideoTestResults {
   testTiming: TestTiming;
 }
 
+// New interface for quality results
+export interface QualityResults {
+  audio: {
+    jitter: number;
+    packetLoss: number;
+    RTT: {
+      avg: string;
+      max: string;
+    };
+    bitrate: {
+      avg: string;
+      max: string;
+    };
+  };
+  video: {
+    jitter: number;
+    packetLoss: number;
+    RTT: {
+      avg: string;
+      max: string;
+    };
+    bitrate: {
+      avg: string;
+      max: string;
+    };
+  };
+}
+
 export interface TestResults {
   audioTestResults: AudioTestResults;
-  bitrateTestResults: BitrateTestResults;
+  bitrateTestResults?: BitrateTestResults; // Optional for new format
   browserInformation: BrowserInformation;
   connectivityResults: ConnectivityResults;
-  preflightTestReport: PreflightTestReport;
+  preflightTestReport?: PreflightTestReport; // Optional for new format
   videoTestResults: VideoTestResults;
+  qualityResults?: QualityResults; // New field for the new format
 }

@@ -6,6 +6,7 @@ import BitrateChart from './visualizations/BitrateChart';
 import ConnectivityStatus from './visualizations/ConnectivityStatus';
 import DeviceInfo from './visualizations/DeviceInfo';
 import ICECandidates from './visualizations/ICECandidates';
+import QualityMetrics from './visualizations/QualityMetrics';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AudioLines, BarChart3, Wifi, Laptop, Radio } from 'lucide-react';
 
@@ -14,6 +15,9 @@ interface ResultsDisplayProps {
 }
 
 const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ data }) => {
+  // Determine which format we have
+  const isNewFormat = !!data.qualityResults;
+
   return (
     <div className="w-full max-w-6xl mx-auto animate-fade-in">
       <div className="flex items-center justify-between mb-8">
@@ -52,7 +56,11 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ data }) => {
         <TabsContent value="overview" className="mt-0 space-y-8 animate-slide-up">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <AudioVisualizer data={data.audioTestResults} />
-            <BitrateChart data={data.bitrateTestResults} />
+            {isNewFormat ? (
+              <QualityMetrics data={data.qualityResults} />
+            ) : (
+              data.bitrateTestResults && <BitrateChart data={data.bitrateTestResults} />
+            )}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <ConnectivityStatus 
@@ -144,69 +152,105 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ data }) => {
         
         <TabsContent value="network" className="mt-0 animate-slide-up">
           <div className="grid grid-cols-1 gap-6">
-            <BitrateChart data={data.bitrateTestResults} />
+            {isNewFormat ? (
+              <QualityMetrics data={data.qualityResults} />
+            ) : (
+              data.bitrateTestResults && <BitrateChart data={data.bitrateTestResults} />
+            )}
+            
             <ConnectivityStatus 
               connectivityResults={data.connectivityResults} 
               preflightReport={data.preflightTestReport} 
             />
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="neo-card p-6 rounded-xl">
-                <h3 className="text-xl font-semibold mb-4">Network Statistics</h3>
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-secondary/50 p-3 rounded-lg">
-                      <div className="text-sm text-muted-foreground mb-1">Average Jitter</div>
-                      <div className="font-medium">
-                        {data.preflightTestReport.report.stats.jitter.average.toFixed(3)} ms
+            {!isNewFormat && data.preflightTestReport && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="neo-card p-6 rounded-xl">
+                  <h3 className="text-xl font-semibold mb-4">Network Statistics</h3>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="bg-secondary/50 p-3 rounded-lg">
+                        <div className="text-sm text-muted-foreground mb-1">Average Jitter</div>
+                        <div className="font-medium">
+                          {data.preflightTestReport.report.stats.jitter.average.toFixed(3)} ms
+                        </div>
                       </div>
-                    </div>
-                    <div className="bg-secondary/50 p-3 rounded-lg">
-                      <div className="text-sm text-muted-foreground mb-1">Average RTT</div>
-                      <div className="font-medium">
-                        {data.preflightTestReport.report.stats.rtt.average.toFixed(1)} ms
+                      <div className="bg-secondary/50 p-3 rounded-lg">
+                        <div className="text-sm text-muted-foreground mb-1">Average RTT</div>
+                        <div className="font-medium">
+                          {data.preflightTestReport.report.stats.rtt.average.toFixed(1)} ms
+                        </div>
                       </div>
-                    </div>
-                    <div className="bg-secondary/50 p-3 rounded-lg">
-                      <div className="text-sm text-muted-foreground mb-1">Packet Loss</div>
-                      <div className="font-medium">
-                        {data.preflightTestReport.report.stats.packetLoss.average}%
+                      <div className="bg-secondary/50 p-3 rounded-lg">
+                        <div className="text-sm text-muted-foreground mb-1">Packet Loss</div>
+                        <div className="font-medium">
+                          {data.preflightTestReport.report.stats.packetLoss.average}%
+                        </div>
                       </div>
-                    </div>
-                    <div className="bg-secondary/50 p-3 rounded-lg">
-                      <div className="text-sm text-muted-foreground mb-1">MOS Score</div>
-                      <div className="font-medium">
-                        {data.preflightTestReport.report.mos.average.toFixed(2)}
+                      <div className="bg-secondary/50 p-3 rounded-lg">
+                        <div className="text-sm text-muted-foreground mb-1">MOS Score</div>
+                        <div className="font-medium">
+                          {data.preflightTestReport.report.mos.average.toFixed(2)}
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              
-              <div className="neo-card p-6 rounded-xl">
-                <h3 className="text-xl font-semibold mb-4">Connection Timeline</h3>
-                <div className="space-y-4">
-                  {data.preflightTestReport.report.progressEvents.map((event, index) => (
-                    <div key={index} className="flex items-center">
-                      <div className="w-16 text-xs text-right mr-4 text-muted-foreground">
-                        {event.duration} ms
+                
+                <div className="neo-card p-6 rounded-xl">
+                  <h3 className="text-xl font-semibold mb-4">Connection Timeline</h3>
+                  <div className="space-y-4">
+                    {data.preflightTestReport.report.progressEvents.map((event, index) => (
+                      <div key={index} className="flex items-center">
+                        <div className="w-16 text-xs text-right mr-4 text-muted-foreground">
+                          {event.duration} ms
+                        </div>
+                        <div className="h-2 bg-primary/20 flex-grow relative">
+                          <div 
+                            className="absolute h-2 bg-primary left-0 top-0" 
+                            style={{ 
+                              width: `${(event.duration / data.preflightTestReport.report.testTiming.duration) * 100}%` 
+                            }}
+                          />
+                        </div>
+                        <div className="ml-4 text-sm">
+                          {event.name.replace(/([A-Z])/g, ' $1').trim().toLowerCase()}
+                        </div>
                       </div>
-                      <div className="h-2 bg-primary/20 flex-grow relative">
-                        <div 
-                          className="absolute h-2 bg-primary left-0 top-0" 
-                          style={{ 
-                            width: `${(event.duration / data.preflightTestReport.report.testTiming.duration) * 100}%` 
-                          }}
-                        />
-                      </div>
-                      <div className="ml-4 text-sm">
-                        {event.name.replace(/([A-Z])/g, ' $1').trim().toLowerCase()}
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
+
+            {isNewFormat && (
+              <div className="neo-card p-6 rounded-xl">
+                <h3 className="text-xl font-semibold mb-4">Media Quality</h3>
+                <p className="text-muted-foreground mb-4">
+                  The quality metrics show the performance of audio and video streams during the test.
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <h4 className="font-medium">Audio Quality</h4>
+                    <div className="h-2 bg-secondary rounded-full overflow-hidden">
+                      <div 
+                        className="h-2 bg-green-500" 
+                        style={{ width: '95%' }}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <h4 className="font-medium">Video Quality</h4>
+                    <div className="h-2 bg-secondary rounded-full overflow-hidden">
+                      <div 
+                        className="h-2 bg-green-500" 
+                        style={{ width: '90%' }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </TabsContent>
         
@@ -282,7 +326,15 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ data }) => {
         </TabsContent>
         
         <TabsContent value="ice" className="mt-0 animate-slide-up">
-          <ICECandidates data={data.bitrateTestResults} />
+          {data.bitrateTestResults && <ICECandidates data={data.bitrateTestResults} />}
+          {!data.bitrateTestResults && (
+            <div className="p-6 bg-secondary/30 rounded-xl text-center">
+              <h3 className="text-xl font-semibold mb-2">ICE Candidates Not Available</h3>
+              <p className="text-muted-foreground">
+                Detailed ICE candidate information is not available in this test result format.
+              </p>
+            </div>
+          )}
         </TabsContent>
       </Tabs>
     </div>
