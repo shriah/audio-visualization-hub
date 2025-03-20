@@ -15,7 +15,6 @@ interface ResultsDisplayProps {
 }
 
 const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ data }) => {
-  // Helper functions for component rendering
   const renderNetworkVisualizations = () => {
     if (data.qualityResults) {
       return <QualityMetrics data={data.qualityResults} />;
@@ -185,10 +184,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ data }) => {
               connectivityResults={data.connectivityResults} 
               preflightReport={data.preflightTestReport} 
             />
-            <DeviceInfo 
-              browserInfo={data.browserInformation}
-              videoTest={data.videoTestResults}
-            />
+            <DeviceInfo browserInfo={data.browserInformation} />
           </div>
         </TabsContent>
         
@@ -281,69 +277,34 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ data }) => {
         </TabsContent>
         
         <TabsContent value="device" className="mt-0 animate-slide-up">
-          <DeviceInfo 
-            browserInfo={data.browserInformation}
-            videoTest={data.videoTestResults}
-          />
+          <DeviceInfo browserInfo={data.browserInformation} />
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            <div className="neo-card p-6 rounded-xl">
-              <h3 className="text-xl font-semibold mb-4">Video Test Details</h3>
-              <div className="space-y-4">
-                <div>
-                  <div className="text-sm text-muted-foreground mb-1">Resolution</div>
+          <div className="neo-card p-6 rounded-xl mt-6">
+            <h3 className="text-xl font-semibold mb-4">Browser Capabilities</h3>
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-secondary/50 p-3 rounded-lg">
+                  <div className="text-sm text-muted-foreground mb-1">Browser</div>
                   <div className="font-medium">
-                    {data.videoTestResults.resolution.width} × {data.videoTestResults.resolution.height}
+                    {data.browserInformation.browser.name} {data.browserInformation.browser.version}
                   </div>
                 </div>
-                <div>
-                  <div className="text-sm text-muted-foreground mb-1">Device ID</div>
-                  <div className="font-mono text-sm bg-secondary/50 p-2 rounded overflow-x-auto">
-                    {data.videoTestResults.deviceId}
+                <div className="bg-secondary/50 p-3 rounded-lg">
+                  <div className="text-sm text-muted-foreground mb-1">Operating System</div>
+                  <div className="font-medium">
+                    {data.browserInformation.os.name} {data.browserInformation.os.version}
                   </div>
                 </div>
-                <div>
-                  <div className="text-sm text-muted-foreground mb-1">Test Duration</div>
-                  <div>
-                    {(data.videoTestResults.testTiming.duration / 1000).toFixed(2)} seconds
+                <div className="bg-secondary/50 p-3 rounded-lg">
+                  <div className="text-sm text-muted-foreground mb-1">Device</div>
+                  <div className="font-medium">
+                    {data.browserInformation.device.vendor || ''} {data.browserInformation.device.model || 'Unknown Device'}
                   </div>
                 </div>
-                <div>
-                  <div className="text-sm text-muted-foreground mb-1">Test Time Range</div>
-                  <div>
-                    {new Date(data.videoTestResults.testTiming.start).toLocaleTimeString()} - {new Date(data.videoTestResults.testTiming.end).toLocaleTimeString()}
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="neo-card p-6 rounded-xl">
-              <h3 className="text-xl font-semibold mb-4">Browser Capabilities</h3>
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 gap-2">
-                  <div className="bg-secondary/50 p-3 rounded-lg">
-                    <div className="text-sm text-muted-foreground mb-1">Browser</div>
-                    <div className="font-medium">
-                      {data.browserInformation.browser.name} {data.browserInformation.browser.version}
-                    </div>
-                  </div>
-                  <div className="bg-secondary/50 p-3 rounded-lg">
-                    <div className="text-sm text-muted-foreground mb-1">Operating System</div>
-                    <div className="font-medium">
-                      {data.browserInformation.os.name} {data.browserInformation.os.version}
-                    </div>
-                  </div>
-                  <div className="bg-secondary/50 p-3 rounded-lg">
-                    <div className="text-sm text-muted-foreground mb-1">Device</div>
-                    <div className="font-medium">
-                      {data.browserInformation.device.vendor || ''} {data.browserInformation.device.model || 'Unknown Device'}
-                    </div>
-                  </div>
-                  <div className="bg-secondary/50 p-3 rounded-lg">
-                    <div className="text-sm text-muted-foreground mb-1">Rendering Engine</div>
-                    <div className="font-medium">
-                      {data.browserInformation.engine.name} {data.browserInformation.engine.version}
-                    </div>
+                <div className="bg-secondary/50 p-3 rounded-lg">
+                  <div className="text-sm text-muted-foreground mb-1">Rendering Engine</div>
+                  <div className="font-medium">
+                    {data.browserInformation.engine.name} {data.browserInformation.engine.version}
                   </div>
                 </div>
               </div>
