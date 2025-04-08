@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -33,7 +32,7 @@ const Documentation = () => {
           <CardContent>
             <p className="text-sm text-muted-foreground">
               The test results contain information about audio and video device tests, browser details, connectivity tests, 
-              and network quality metrics. This guide explains the structure and all attributes in the JSON file.
+              and network quality metrics. This guide explains the structure and all attributes in the JSON file, including acceptable values where applicable.
             </p>
           </CardContent>
         </Card>
@@ -68,12 +67,33 @@ const Documentation = () => {
             <CardContent className="pt-6">
               <p className="mb-4">The <code>browserInformation</code> object contains:</p>
               <ul className="list-disc pl-6 space-y-1 mb-4">
-                <li><strong>ua</strong>: Full user agent string from the browser</li>
-                <li><strong>browser</strong>: Object containing browser name, version and major version</li>
-                <li><strong>engine</strong>: Object containing browser engine name and version</li>
-                <li><strong>os</strong>: Object containing operating system name and version</li>
-                <li><strong>device</strong>: Object containing device vendor and model (if available)</li>
-                <li><strong>cpu</strong>: Object containing CPU architecture information</li>
+                <li><strong>ua</strong>: Full user agent string from the browser <span className="text-gray-500">(String - varies by browser)</span></li>
+                <li><strong>browser</strong>: Object containing browser name, version and major version
+                  <ul className="list-disc pl-6 mt-1">
+                    <li><strong>name</strong>: <span className="text-gray-500">(String - e.g., "Chrome", "Firefox", "Safari", "Edge")</span></li>
+                    <li><strong>version</strong>: <span className="text-gray-500">(String - full version number, e.g., "89.0.4389.114")</span></li>
+                    <li><strong>major</strong>: <span className="text-gray-500">(String - major version number, e.g., "89")</span></li>
+                  </ul>
+                </li>
+                <li><strong>engine</strong>: Object containing browser engine name and version
+                  <ul className="list-disc pl-6 mt-1">
+                    <li><strong>name</strong>: <span className="text-gray-500">(String - e.g., "WebKit", "Gecko", "Blink")</span></li>
+                    <li><strong>version</strong>: <span className="text-gray-500">(String - e.g., "537.36")</span></li>
+                  </ul>
+                </li>
+                <li><strong>os</strong>: Object containing operating system name and version
+                  <ul className="list-disc pl-6 mt-1">
+                    <li><strong>name</strong>: <span className="text-gray-500">(String - e.g., "Windows", "Mac OS", "Linux", "iOS", "Android")</span></li>
+                    <li><strong>version</strong>: <span className="text-gray-500">(String - e.g., "10", "10.15.7", "11")</span></li>
+                  </ul>
+                </li>
+                <li><strong>device</strong>: Object containing device vendor and model (if available)
+                  <ul className="list-disc pl-6 mt-1">
+                    <li><strong>vendor</strong>: <span className="text-gray-500">(String - e.g., "Apple", "Samsung", "Google"; may be empty for desktops)</span></li>
+                    <li><strong>model</strong>: <span className="text-gray-500">(String - e.g., "iPhone", "Pixel"; may be empty for desktops)</span></li>
+                  </ul>
+                </li>
+                <li><strong>cpu</strong>: Object containing CPU architecture information <span className="text-gray-500">(Structure varies by device)</span></li>
               </ul>
               
               <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-md overflow-x-auto mt-4">
@@ -115,12 +135,18 @@ const Documentation = () => {
               <p className="mb-4">The <code>audioTestResults</code> object contains:</p>
               <ul className="list-disc pl-6 space-y-1 mb-4">
                 <li><strong>inputTest</strong>: Object containing microphone test results</li>
-                <li className="ml-6"><strong>deviceId</strong>: ID of the audio input device used in testing</li>
-                <li className="ml-6"><strong>errors</strong>: Array of error messages encountered during testing</li>
-                <li className="ml-6"><strong>testName</strong>: Name identifier for the test performed</li>
-                <li className="ml-6"><strong>values</strong>: Array of numeric values collected during audio testing (e.g., volume levels)</li>
-                <li className="ml-6"><strong>testTiming</strong>: Object with start time, end time, and test duration</li>
-                <li><strong>outputTest</strong>: Object containing speaker test results (can be null if not tested)</li>
+                <li className="ml-6"><strong>deviceId</strong>: ID of the audio input device used in testing <span className="text-gray-500">(String - usually a UUID or "default")</span></li>
+                <li className="ml-6"><strong>errors</strong>: Array of error messages encountered during testing <span className="text-gray-500">(String[] - empty if no errors)</span></li>
+                <li className="ml-6"><strong>testName</strong>: Name identifier for the test performed <span className="text-gray-500">(String - e.g., "Audio Input Test")</span></li>
+                <li className="ml-6"><strong>values</strong>: Array of numeric values collected during audio testing <span className="text-gray-500">(Number[] - values range from 0 to 1, representing volume levels)</span></li>
+                <li className="ml-6"><strong>testTiming</strong>: Object with start time, end time, and test duration
+                  <ul className="list-disc pl-6 mt-1">
+                    <li><strong>start</strong>: <span className="text-gray-500">(Number - UNIX timestamp in milliseconds)</span></li>
+                    <li><strong>end</strong>: <span className="text-gray-500">(Number - UNIX timestamp in milliseconds)</span></li>
+                    <li><strong>duration</strong>: <span className="text-gray-500">(Number - milliseconds, typically 3000-10000)</span></li>
+                  </ul>
+                </li>
+                <li><strong>outputTest</strong>: Object containing speaker test results <span className="text-gray-500">(Can be null if not tested; structure similar to inputTest when present)</span></li>
               </ul>
               
               <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-md overflow-x-auto mt-4">
@@ -130,7 +156,7 @@ const Documentation = () => {
     "deviceId": "default",        // ID of audio input device
     "errors": [],                 // Array of errors that occurred
     "testName": "Audio Input Test", // Name of the test
-    "values": [0.15, 0.22, 0.18, 0.25], // Volume levels detected
+    "values": [0.15, 0.22, 0.18, 0.25], // Volume levels detected (0-1)
     "testTiming": {
       "start": 1617293568420,     // Test start timestamp (ms)
       "end": 1617293573420,       // Test end timestamp (ms)
@@ -154,13 +180,22 @@ const Documentation = () => {
             <CardContent className="pt-6">
               <p className="mb-4">The <code>videoTestResults</code> object contains:</p>
               <ul className="list-disc pl-6 space-y-1 mb-4">
-                <li><strong>deviceId</strong>: ID of the video device used in testing</li>
-                <li><strong>errors</strong>: Array of error messages encountered during testing</li>
-                <li><strong>resolution</strong>: Object containing the captured video dimensions</li>
-                <li className="ml-6"><strong>width</strong>: Width of the video in pixels</li>
-                <li className="ml-6"><strong>height</strong>: Height of the video in pixels</li>
-                <li><strong>testName</strong>: Name identifier for the test performed</li>
-                <li><strong>testTiming</strong>: Object with start time, end time, and test duration</li>
+                <li><strong>deviceId</strong>: ID of the video device used in testing <span className="text-gray-500">(String - usually a UUID or "default")</span></li>
+                <li><strong>errors</strong>: Array of error messages encountered during testing <span className="text-gray-500">(String[] - empty if no errors)</span></li>
+                <li><strong>resolution</strong>: Object containing the captured video dimensions
+                  <ul className="list-disc pl-6 mt-1">
+                    <li><strong>width</strong>: <span className="text-gray-500">(Number - pixels, common values: 640, 1280, 1920)</span></li>
+                    <li><strong>height</strong>: <span className="text-gray-500">(Number - pixels, common values: 480, 720, 1080)</span></li>
+                  </ul>
+                </li>
+                <li><strong>testName</strong>: Name identifier for the test performed <span className="text-gray-500">(String - e.g., "Video Device Test")</span></li>
+                <li><strong>testTiming</strong>: Object with start time, end time, and test duration
+                  <ul className="list-disc pl-6 mt-1">
+                    <li><strong>start</strong>: <span className="text-gray-500">(Number - UNIX timestamp in milliseconds)</span></li>
+                    <li><strong>end</strong>: <span className="text-gray-500">(Number - UNIX timestamp in milliseconds)</span></li>
+                    <li><strong>duration</strong>: <span className="text-gray-500">(Number - milliseconds, typically 3000-5000)</span></li>
+                  </ul>
+                </li>
               </ul>
               
               <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-md overflow-x-auto mt-4">
@@ -192,7 +227,21 @@ const Documentation = () => {
           <h2 className="text-2xl font-bold mb-4">Connectivity Results</h2>
           <Card>
             <CardContent className="pt-6">
-              <p className="mb-4">The <code>connectivityResults</code> object contains various connectivity status checks. Each property can have one of these values: <code>"operational"</code>, <code>"degraded"</code>, <code>"outage"</code>, <code>"Reachable"</code>, <code>"success"</code>, or <code>"failed"</code>.</p>
+              <p className="mb-4">The <code>connectivityResults</code> object contains various connectivity status checks. Each property can have one of these values:</p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div className="bg-slate-100 dark:bg-slate-800 p-3 rounded-md">
+                  <p className="font-semibold">Possible Values:</p>
+                  <ul className="list-disc pl-6 mt-2">
+                    <li><code>"operational"</code>: Service is working normally</li>
+                    <li><code>"degraded"</code>: Service is working but with reduced performance</li>
+                    <li><code>"outage"</code>: Service is not working</li>
+                    <li><code>"Reachable"</code>: Service can be reached</li>
+                    <li><code>"success"</code>: Test completed successfully</li>
+                    <li><code>"failed"</code>: Test failed</li>
+                  </ul>
+                </div>
+              </div>
               
               <div className="mb-4">
                 <h3 className="text-lg font-semibold mb-2">Twilio:</h3>
@@ -230,7 +279,7 @@ const Documentation = () => {
   "networkTraversalService": "operational", // Network traversal status
   "goRooms": "operational",              // Go-based room service status
   "signalingRegion": "operational",      // Signaling region status
-  "turn": "operational",                 // TURN server status
+  "turn": "operational"                 // TURN server status
   
   /* LiveKit properties */
   "signalConnection": "operational",     // Signaling connection status
@@ -254,14 +303,29 @@ const Documentation = () => {
             <CardContent className="pt-6">
               <p className="mb-4">The <code>bitrateTestResults</code> object, if present, contains:</p>
               <ul className="list-disc pl-6 space-y-1 mb-4">
-                <li><strong>maxBitrate</strong>: Maximum bitrate achieved during testing (in bps)</li>
-                <li><strong>averageBitrate</strong>: Average bitrate during the test (in bps)</li>
-                <li><strong>errors</strong>: Array of error messages encountered during testing</li>
-                <li><strong>iceCandidateStats</strong>: Array of ICE candidate statistics objects</li>
-                <li><strong>testName</strong>: Name identifier for the test performed</li>
-                <li><strong>testTiming</strong>: Object with start time, end time, and test duration</li>
-                <li><strong>values</strong>: Array of bitrate measurements during the test</li>
-                <li><strong>selectedIceCandidatePairStats</strong>: Object containing the selected ICE candidate pair used for the connection</li>
+                <li><strong>maxBitrate</strong>: Maximum bitrate achieved during testing <span className="text-gray-500">(Number - bits per second, typically 100000-10000000)</span></li>
+                <li><strong>averageBitrate</strong>: Average bitrate during the test <span className="text-gray-500">(Number - bits per second)</span></li>
+                <li><strong>errors</strong>: Array of error messages encountered during testing <span className="text-gray-500">(String[] - empty if no errors)</span></li>
+                <li><strong>iceCandidateStats</strong>: Array of ICE candidate statistics objects
+                  <ul className="list-disc pl-6 mt-1">
+                    <li>Each object contains properties like <strong>id</strong>, <strong>timestamp</strong>, <strong>address</strong>, <strong>candidateType</strong> (values: "host", "srflx", "relay"), etc.</li>
+                  </ul>
+                </li>
+                <li><strong>testName</strong>: Name identifier for the test performed <span className="text-gray-500">(String - e.g., "Bitrate Test")</span></li>
+                <li><strong>testTiming</strong>: Object with start time, end time, and test duration
+                  <ul className="list-disc pl-6 mt-1">
+                    <li><strong>start</strong>: <span className="text-gray-500">(Number - UNIX timestamp in milliseconds)</span></li>
+                    <li><strong>end</strong>: <span className="text-gray-500">(Number - UNIX timestamp in milliseconds)</span></li>
+                    <li><strong>duration</strong>: <span className="text-gray-500">(Number - milliseconds, typically 5000-30000)</span></li>
+                  </ul>
+                </li>
+                <li><strong>values</strong>: Array of bitrate measurements during the test <span className="text-gray-500">(Number[] - bits per second)</span></li>
+                <li><strong>selectedIceCandidatePairStats</strong>: Object containing the selected ICE candidate pair used for the connection
+                  <ul className="list-disc pl-6 mt-1">
+                    <li><strong>localCandidate</strong>: Local ICE candidate statistics</li>
+                    <li><strong>remoteCandidate</strong>: Remote ICE candidate statistics</li>
+                  </ul>
+                </li>
               </ul>
               
               <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-md overflow-x-auto mt-4">
@@ -281,7 +345,7 @@ const Documentation = () => {
       "isRemote": false,           // Whether this is a remote candidate
       "port": 56789,               // Port number
       "priority": 123456,          // Candidate priority
-      "protocol": "udp",           // Protocol used
+      "protocol": "udp",           // Protocol used (udp, tcp)
       "transportId": "RTCTransport_0", // Transport ID
       // ... other ICE candidate properties
     }
@@ -315,14 +379,42 @@ const Documentation = () => {
               <p className="mb-4">The <code>preflightTestReport</code> object, if present, contains:</p>
               <ul className="list-disc pl-6 space-y-1 mb-4">
                 <li><strong>report</strong>: Object containing the detailed test report</li>
-                <li className="ml-6"><strong>testTiming</strong>: Object with start time, end time, and test duration</li>
-                <li className="ml-6"><strong>networkTiming</strong>: Object with timing information for different network processes</li>
-                <li className="ml-6"><strong>stats</strong>: Object containing jitter, RTT, and packet loss statistics</li>
-                <li className="ml-6"><strong>selectedIceCandidatePairStats</strong>: Object with information about the selected ICE candidate pair</li>
-                <li className="ml-6"><strong>iceCandidateStats</strong>: Array of simplified ICE candidate statistics</li>
-                <li className="ml-6"><strong>progressEvents</strong>: Array of events that occurred during the test</li>
-                <li className="ml-6"><strong>mos</strong>: Mean Opinion Score statistics</li>
-                <li><strong>error</strong>: Error information, null if no errors occurred</li>
+                <li className="ml-6"><strong>testTiming</strong>: Object with start time, end time, and test duration
+                  <ul className="list-disc pl-6 mt-1">
+                    <li><strong>start</strong>: <span className="text-gray-500">(Number - UNIX timestamp in milliseconds)</span></li>
+                    <li><strong>end</strong>: <span className="text-gray-500">(Number - UNIX timestamp in milliseconds)</span></li>
+                    <li><strong>duration</strong>: <span className="text-gray-500">(Number - milliseconds)</span></li>
+                  </ul>
+                </li>
+                <li className="ml-6"><strong>networkTiming</strong>: Object with timing information for different network processes
+                  <ul className="list-disc pl-6 mt-1">
+                    <li>Each sub-object (<strong>dtls</strong>, <strong>ice</strong>, etc.) contains <strong>start</strong>, <strong>end</strong>, and <strong>duration</strong> fields</li>
+                  </ul>
+                </li>
+                <li className="ml-6"><strong>stats</strong>: Object containing quality statistics
+                  <ul className="list-disc pl-6 mt-1">
+                    <li><strong>jitter</strong>: Object with <strong>min</strong>, <strong>max</strong>, and <strong>average</strong> values <span className="text-gray-500">(Numbers - milliseconds)</span></li>
+                    <li><strong>rtt</strong>: Object with <strong>min</strong>, <strong>max</strong>, and <strong>average</strong> values <span className="text-gray-500">(Numbers - milliseconds)</span></li>
+                    <li><strong>packetLoss</strong>: Object with <strong>min</strong>, <strong>max</strong>, and <strong>average</strong> values <span className="text-gray-500">(Numbers - percentage, 0-100)</span></li>
+                  </ul>
+                </li>
+                <li className="ml-6"><strong>selectedIceCandidatePairStats</strong>: Object with information about the selected ICE candidate pair
+                  <ul className="list-disc pl-6 mt-1">
+                    <li>Contains <strong>localCandidate</strong> and <strong>remoteCandidate</strong> objects</li>
+                  </ul>
+                </li>
+                <li className="ml-6"><strong>iceCandidateStats</strong>: Array of simplified ICE candidate statistics <span className="text-gray-500">(Array of objects)</span></li>
+                <li className="ml-6"><strong>progressEvents</strong>: Array of events that occurred during the test
+                  <ul className="list-disc pl-6 mt-1">
+                    <li>Each event has a <strong>duration</strong> <span className="text-gray-500">(Number - milliseconds)</span> and <strong>name</strong> <span className="text-gray-500">(String - e.g., "dtls-connected", "ice-connected")</span></li>
+                  </ul>
+                </li>
+                <li className="ml-6"><strong>mos</strong>: Mean Opinion Score statistics
+                  <ul className="list-disc pl-6 mt-1">
+                    <li>Contains <strong>min</strong>, <strong>max</strong>, and <strong>average</strong> values <span className="text-gray-500">(Numbers - range 1.0-5.0, where 5 is excellent quality)</span></li>
+                  </ul>
+                </li>
+                <li><strong>error</strong>: Error information <span className="text-gray-500">(null if no errors; object with error details if present)</span></li>
               </ul>
               
               <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-md overflow-x-auto mt-4">
@@ -347,9 +439,9 @@ const Documentation = () => {
     },
     "stats": {
       "jitter": {                  // Jitter statistics
-        "min": 2,                  // Minimum jitter value
-        "max": 15,                 // Maximum jitter value
-        "average": 8               // Average jitter value
+        "min": 2,                  // Minimum jitter value (ms)
+        "max": 15,                 // Maximum jitter value (ms)
+        "average": 8               // Average jitter value (ms)
       },
       "rtt": { /* Round-trip time statistics */ },
       "packetLoss": { /* Packet loss statistics */ }
@@ -357,11 +449,11 @@ const Documentation = () => {
     "selectedIceCandidatePairStats": {
       "localCandidate": {          // Local ICE candidate used
         "transportId": "RTCTransport_1",
-        "candidateType": "host",
+        "candidateType": "host",   // Type: "host", "srflx", or "relay"
         "port": 56789,
         "address": "192.168.1.5",
         "priority": 123456,
-        "protocol": "udp"
+        "protocol": "udp"          // Protocol: "udp" or "tcp"
         // ... other properties
       },
       "remoteCandidate": { /* Remote ICE candidate used */ }
@@ -377,9 +469,9 @@ const Documentation = () => {
       // ... more events
     ],
     "mos": {                       // Mean Opinion Score
-      "min": 3.5,                  // Minimum MOS
-      "max": 4.2,                  // Maximum MOS
-      "average": 3.9               // Average MOS
+      "min": 3.5,                  // Minimum MOS (1.0-5.0)
+      "max": 4.2,                  // Maximum MOS (1.0-5.0)
+      "average": 3.9               // Average MOS (1.0-5.0)
     }
   },
   "error": null                    // Error information, null if none
@@ -400,23 +492,43 @@ const Documentation = () => {
               <p className="mb-4">The <code>qualityResults</code> object, if present, contains:</p>
               <ul className="list-disc pl-6 space-y-1 mb-4">
                 <li><strong>audio</strong>: Object containing audio quality metrics</li>
-                <li className="ml-6"><strong>jitter</strong>: Audio jitter measurement in milliseconds</li>
-                <li className="ml-6"><strong>packetLoss</strong>: Audio packet loss percentage</li>
-                <li className="ml-6"><strong>RTT</strong>: Round-trip time information (avg and max)</li>
-                <li className="ml-6"><strong>bitrate</strong>: Audio bitrate information (avg and max)</li>
+                <li className="ml-6"><strong>jitter</strong>: Audio jitter measurement <span className="text-gray-500">(Number - milliseconds, lower is better)</span></li>
+                <li className="ml-6"><strong>packetLoss</strong>: Audio packet loss percentage <span className="text-gray-500">(Number - percentage, 0-100, lower is better)</span></li>
+                <li className="ml-6"><strong>RTT</strong>: Round-trip time information
+                  <ul className="list-disc pl-6 mt-1">
+                    <li><strong>avg</strong>: <span className="text-gray-500">(String - e.g., "45ms", lower is better)</span></li>
+                    <li><strong>max</strong>: <span className="text-gray-500">(String - e.g., "120ms")</span></li>
+                  </ul>
+                </li>
+                <li className="ml-6"><strong>bitrate</strong>: Audio bitrate information
+                  <ul className="list-disc pl-6 mt-1">
+                    <li><strong>avg</strong>: <span className="text-gray-500">(String - e.g., "24kbps")</span></li>
+                    <li><strong>max</strong>: <span className="text-gray-500">(String - e.g., "32kbps")</span></li>
+                  </ul>
+                </li>
                 <li><strong>video</strong>: Object containing video quality metrics</li>
-                <li className="ml-6"><strong>jitter</strong>: Video jitter measurement in milliseconds</li>
-                <li className="ml-6"><strong>packetLoss</strong>: Video packet loss percentage</li>
-                <li className="ml-6"><strong>RTT</strong>: Round-trip time information (avg and max)</li>
-                <li className="ml-6"><strong>bitrate</strong>: Video bitrate information (avg and max)</li>
+                <li className="ml-6"><strong>jitter</strong>: Video jitter measurement <span className="text-gray-500">(Number - milliseconds, lower is better)</span></li>
+                <li className="ml-6"><strong>packetLoss</strong>: Video packet loss percentage <span className="text-gray-500">(Number - percentage, 0-100, lower is better)</span></li>
+                <li className="ml-6"><strong>RTT</strong>: Round-trip time information
+                  <ul className="list-disc pl-6 mt-1">
+                    <li><strong>avg</strong>: <span className="text-gray-500">(String - e.g., "68ms", lower is better)</span></li>
+                    <li><strong>max</strong>: <span className="text-gray-500">(String - e.g., "150ms")</span></li>
+                  </ul>
+                </li>
+                <li className="ml-6"><strong>bitrate</strong>: Video bitrate information
+                  <ul className="list-disc pl-6 mt-1">
+                    <li><strong>avg</strong>: <span className="text-gray-500">(String - e.g., "1.2Mbps")</span></li>
+                    <li><strong>max</strong>: <span className="text-gray-500">(String - e.g., "2.5Mbps")</span></li>
+                  </ul>
+                </li>
               </ul>
               
               <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-md overflow-x-auto mt-4">
                 <pre className="text-sm">
 {`{
   "audio": {
-    "jitter": 12,                // Audio jitter in ms
-    "packetLoss": 0.5,           // Audio packet loss percentage
+    "jitter": 12,                // Audio jitter in ms (lower is better)
+    "packetLoss": 0.5,           // Audio packet loss percentage (lower is better)
     "RTT": {
       "avg": "45ms",             // Average round-trip time
       "max": "120ms"             // Maximum round-trip time
@@ -427,8 +539,8 @@ const Documentation = () => {
     }
   },
   "video": {
-    "jitter": 15,                // Video jitter in ms
-    "packetLoss": 0.8,           // Video packet loss percentage
+    "jitter": 15,                // Video jitter in ms (lower is better)
+    "packetLoss": 0.8,           // Video packet loss percentage (lower is better)
     "RTT": {
       "avg": "68ms",             // Average round-trip time
       "max": "150ms"             // Maximum round-trip time
