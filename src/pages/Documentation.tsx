@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -194,7 +195,7 @@ const Documentation = () => {
               <p className="mb-4">The <code>connectivityResults</code> object contains various connectivity status checks. Each property can have one of these values: <code>"operational"</code>, <code>"degraded"</code>, <code>"outage"</code>, <code>"Reachable"</code>, <code>"success"</code>, or <code>"failed"</code>.</p>
               
               <div className="mb-4">
-                <h3 className="text-lg font-semibold mb-2">Legacy Format Properties:</h3>
+                <h3 className="text-lg font-semibold mb-2">Twilio:</h3>
                 <ul className="list-disc pl-6 space-y-1">
                   <li><strong>groupRooms</strong>: Status of group video rooms functionality</li>
                   <li><strong>peerToPeerRooms</strong>: Status of peer-to-peer connection functionality</li>
@@ -208,7 +209,7 @@ const Documentation = () => {
               </div>
               
               <div>
-                <h3 className="text-lg font-semibold mb-2">New Format Properties:</h3>
+                <h3 className="text-lg font-semibold mb-2">LiveKit:</h3>
                 <ul className="list-disc pl-6 space-y-1">
                   <li><strong>signalConnection</strong>: Status of signaling connection</li>
                   <li><strong>webrtcConnection</strong>: Status of WebRTC connection</li>
@@ -221,7 +222,7 @@ const Documentation = () => {
               <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-md overflow-x-auto mt-4">
                 <pre className="text-sm">
 {`{
-  /* Legacy format properties */
+  /* Twilio properties */
   "groupRooms": "operational",           // Group video room status
   "peerToPeerRooms": "operational",      // P2P room status
   "recordings": "operational",           // Recording functionality status
@@ -231,7 +232,7 @@ const Documentation = () => {
   "signalingRegion": "operational",      // Signaling region status
   "turn": "operational",                 // TURN server status
   
-  /* New format properties */
+  /* LiveKit properties */
   "signalConnection": "operational",     // Signaling connection status
   "webrtcConnection": "operational",     // WebRTC connection status
   "publishAudio": "operational",         // Audio publishing status

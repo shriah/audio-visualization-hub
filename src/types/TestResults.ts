@@ -74,7 +74,7 @@ export interface BrowserInformation {
 export type ConnectivityStatus = 'operational' | 'degraded' | 'outage' | 'Reachable' | 'success' | 'failed';
 
 export interface ConnectivityResults {
-  // Legacy format properties
+  // Twilio properties
   groupRooms?: ConnectivityStatus;
   peerToPeerRooms?: ConnectivityStatus;
   recordings?: ConnectivityStatus;
@@ -84,7 +84,7 @@ export interface ConnectivityResults {
   signalingRegion?: ConnectivityStatus;
   turn?: ConnectivityStatus;
   
-  // New format properties
+  // LiveKit properties
   signalConnection?: ConnectivityStatus;
   webrtcConnection?: ConnectivityStatus;
   publishAudio?: ConnectivityStatus;
