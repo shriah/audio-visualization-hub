@@ -2,7 +2,7 @@
 import React from 'react';
 import { BitrateTestResults } from '@/types/TestResults';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Network } from 'lucide-react';
+import { Network, AlertTriangle, Check, Info } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -20,6 +20,12 @@ const BitrateChart: React.FC<BitrateChartProps> = ({ data }) => {
     index,
     bitrate: value / 1000, // Convert to Kbps for readability
   }));
+  
+  // Define thresholds for bitrate quality
+  // 500 Kbps is considered minimum for good video quality
+  const isAverageBitrateGood = averageBitrate >= 500000;
+  // 1000 Kbps (1 Mbps) is considered good for HD video
+  const isMaxBitrateGood = maxBitrate >= 1000000;
   
   return (
     <Card className="neo-card overflow-hidden">
@@ -43,17 +49,51 @@ const BitrateChart: React.FC<BitrateChartProps> = ({ data }) => {
         <div className="grid grid-cols-3 gap-4 mb-6">
           <div className="rounded-lg bg-secondary/50 p-3">
             <div className="text-muted-foreground mb-1 text-sm">Max Bitrate</div>
-            <div className="font-medium">{(maxBitrate / 1000).toFixed(2)} Kbps</div>
+            <div className="font-medium flex items-center gap-1">
+              {(maxBitrate / 1000).toFixed(2)} Kbps
+              {!isMaxBitrateGood && (
+                <span className="tooltip-wrapper" title="Max bitrate is lower than recommended (1000 Kbps)">
+                  <AlertTriangle className="h-4 w-4 text-amber-500" />
+                </span>
+              )}
+              {isMaxBitrateGood && (
+                <span className="tooltip-wrapper" title="Max bitrate is good">
+                  <Check className="h-4 w-4 text-green-500" />
+                </span>
+              )}
+            </div>
           </div>
           <div className="rounded-lg bg-secondary/50 p-3">
             <div className="text-muted-foreground mb-1 text-sm">Average Bitrate</div>
-            <div className="font-medium">{(averageBitrate / 1000).toFixed(2)} Kbps</div>
+            <div className="font-medium flex items-center gap-1">
+              {(averageBitrate / 1000).toFixed(2)} Kbps
+              {!isAverageBitrateGood && (
+                <span className="tooltip-wrapper" title="Average bitrate is lower than recommended (500 Kbps)">
+                  <AlertTriangle className="h-4 w-4 text-amber-500" />
+                </span>
+              )}
+              {isAverageBitrateGood && (
+                <span className="tooltip-wrapper" title="Average bitrate is good">
+                  <Check className="h-4 w-4 text-green-500" />
+                </span>
+              )}
+            </div>
           </div>
           <div className="rounded-lg bg-secondary/50 p-3">
             <div className="text-muted-foreground mb-1 text-sm">Test Status</div>
             <div className="font-medium flex items-center">
               <div className={`w-2 h-2 rounded-full mr-2 ${data.errors.length === 0 ? 'bg-green-500' : 'bg-red-500'}`}></div>
-              {data.errors.length === 0 ? 'Passed' : 'Failed'}
+              {data.errors.length === 0 ? (
+                <>
+                  Passed
+                  <Check className="h-4 w-4 text-green-500 ml-1" />
+                </>
+              ) : (
+                <>
+                  Failed
+                  <AlertTriangle className="h-4 w-4 text-red-500 ml-1" />
+                </>
+              )}
             </div>
           </div>
         </div>

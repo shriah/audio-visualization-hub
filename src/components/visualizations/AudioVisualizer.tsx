@@ -2,7 +2,7 @@
 import React from 'react';
 import { AudioTestResults } from '@/types/TestResults';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Mic } from 'lucide-react';
+import { Mic, AlertTriangle, Check, Info } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 interface AudioVisualizerProps {
@@ -21,6 +21,9 @@ const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ data }) => {
   
   // Calculate average audio level
   const averageLevel = values.reduce((sum, val) => sum + val, 0) / values.length;
+  
+  // Check if average level is too low (below 0.1) or too high (above 0.9)
+  const isAudioLevelInRange = averageLevel > 0.1 && averageLevel < 0.9;
   
   return (
     <Card className="neo-card overflow-hidden">
@@ -44,8 +47,18 @@ const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ data }) => {
         <div className="mt-2 mb-6">
           <div className="flex justify-between mb-1">
             <span className="text-sm font-medium">Audio Levels</span>
-            <span className="text-sm text-muted-foreground">
+            <span className="text-sm text-muted-foreground flex items-center gap-1">
               Avg: {averageLevel.toFixed(2)}
+              {!isAudioLevelInRange && (
+                <span className="tooltip-wrapper" title={averageLevel < 0.1 ? "Audio level too low" : "Audio level too high"}>
+                  <AlertTriangle className="h-4 w-4 text-amber-500" />
+                </span>
+              )}
+              {isAudioLevelInRange && (
+                <span className="tooltip-wrapper" title="Audio level in good range">
+                  <Check className="h-4 w-4 text-green-500" />
+                </span>
+              )}
             </span>
           </div>
           
@@ -85,7 +98,17 @@ const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ data }) => {
             <div className="text-muted-foreground mb-1">Test Status</div>
             <div className="font-medium flex items-center">
               <div className={`w-2 h-2 rounded-full mr-2 ${inputTest.errors.length === 0 ? 'bg-green-500' : 'bg-red-500'}`}></div>
-              {inputTest.errors.length === 0 ? 'Passed' : 'Failed'}
+              {inputTest.errors.length === 0 ? (
+                <>
+                  Passed
+                  <Check className="h-4 w-4 text-green-500 ml-1" />
+                </>
+              ) : (
+                <>
+                  Failed
+                  <AlertTriangle className="h-4 w-4 text-red-500 ml-1" />
+                </>
+              )}
             </div>
           </div>
         </div>
