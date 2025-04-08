@@ -1,83 +1,92 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { TestResults } from "@/types/TestResults";
+import ResultsDisplay from "@/components/ResultsDisplay";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, Download, FileText, Loader2 } from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
 
-import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import ResultsDisplay from '@/components/ResultsDisplay';
-import { TestResults } from '@/types/TestResults';
-import { ChevronLeft, Download } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
-
-const Results: React.FC = () => {
-  const location = useLocation();
+export default function Results() {
   const navigate = useNavigate();
-  const testResults = location.state?.testResults as TestResults | null;
+  const [results, setResults] = useState<TestResults | null>(null);
 
-  // Redirect to home if no results are available
-  React.useEffect(() => {
-    if (!testResults) {
-      navigate('/', { replace: true });
+  useEffect(() => {
+    // Get the results from sessionStorage
+    const storedResults = sessionStorage.getItem('testResults');
+    if (storedResults) {
+      try {
+        const parsedResults = JSON.parse(storedResults);
+        setResults(parsedResults);
+      } catch (error) {
+        console.error('Error parsing results:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load test results. Please try again.",
+          variant: "destructive",
+        });
+        navigate('/');
+      }
+    } else {
+      // If no results are stored, redirect to the home page
+      navigate('/');
     }
-  }, [testResults, navigate]);
-
-  if (!testResults) {
-    return null;
-  }
-
-  const handleBack = () => {
-    navigate('/');
-  };
+  }, [navigate]);
 
   const handleExport = () => {
-    const dataStr = JSON.stringify(testResults, null, 2);
+    if (!results) return;
+    
+    const dataStr = JSON.stringify(results, null, 2);
     const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
     
-    const exportFileDefaultName = `test-results-${new Date().toISOString().slice(0, 10)}.json`;
+    const exportFileDefaultName = 'webrtc-test-results.json';
     
     const linkElement = document.createElement('a');
     linkElement.setAttribute('href', dataUri);
     linkElement.setAttribute('download', exportFileDefaultName);
     linkElement.click();
-    
-    toast.success('Results exported successfully');
   };
 
+  if (!results) {
+    return (
+      <div className="container mx-auto py-10 flex justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="border-b border-border">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={handleBack}
-              className="flex items-center gap-1"
-            >
-              <ChevronLeft className="h-4 w-4" />
-              <span>Back</span>
-            </Button>
-          </div>
-          
-          <div className="flex items-center gap-3">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={handleExport}
-              className="flex items-center gap-1"
-            >
-              <Download className="h-4 w-4" />
-              <span>Export</span>
-            </Button>
-          </div>
+    <div className="container mx-auto py-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <Button variant="outline" size="sm" onClick={() => navigate('/')}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back
+          </Button>
+          <h1 className="text-2xl font-bold">Test Results</h1>
         </div>
-      </header>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => navigate('/documentation')}
+            className="flex items-center gap-2"
+          >
+            <FileText className="h-4 w-4" />
+            Documentation
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleExport}
+            className="flex items-center gap-2"
+          >
+            <Download className="h-4 w-4" />
+            Export
+          </Button>
+        </div>
+      </div>
       
-      <main className="flex-grow py-8 md:py-12">
-        <div className="container mx-auto px-4">
-          <ResultsDisplay data={testResults} />
-        </div>
-      </main>
+      <ResultsDisplay results={results} />
     </div>
   );
-};
-
-export default Results;
+}
