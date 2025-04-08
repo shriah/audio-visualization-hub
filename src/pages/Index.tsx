@@ -32,7 +32,7 @@ export default function Index() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <FileImport onFileImport={handleFileImport} />
+          <FileImport onImport={handleFileImport} />
         </CardContent>
         <CardFooter className="flex justify-between">
           <Button variant="outline" onClick={() => navigate('/documentation')} className="flex items-center gap-2">

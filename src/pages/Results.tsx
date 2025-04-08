@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TestResults } from "@/types/TestResults";
@@ -86,7 +87,7 @@ export default function Results() {
         </div>
       </div>
       
-      <ResultsDisplay results={results} />
+      <ResultsDisplay data={results} />
     </div>
   );
 }
